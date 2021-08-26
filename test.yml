@@ -1,0 +1,28 @@
+-name : install java 8 using yum
+  yum :
+    name : "{{java.version}}"
+    state : present
+  become : true
+-name : correct alternatives to change java version
+  alternatives :
+    name : java
+	link : /bin/java
+  path : "{{java.alternatives}}"
+-name : download jemkins repo yum url
+  get-url : 
+    url "{{jenkins.repo-url}}"
+    dest : /etc/yum.repos.d/jenkins.repo
+  become : true
+-name : import gpg key
+  rpm-key:
+    state : present
+    key : "{{jenkins.gpg-key}}"
+-name : install jenkins
+  yum :
+	name : jenkins
+	state : present
+-name : start jenkins and enable on boot
+service :
+  name : jenkins
+  state : started
+  enabled : yes
